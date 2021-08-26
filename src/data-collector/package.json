@@ -1,0 +1,23 @@
+{
+  "name": "data-collector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "npx tsc",
+    "start": "node dist/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/client": "^3.4.9",
+    "cross-fetch": "^3.1.4",
+    "graphql": "^15.5.1",
+    "influx": "^5.8.0",
+    "mqtt": "^4.2.6",
+    "typescript": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.13"
+  }
+}

@@ -1,0 +1,62 @@
+version: "2.4"
+services:
+  # Eclipse Mosquitto MQTT Broker
+  ie_databus:
+    image: eclipse-mosquitto
+    container_name: ie_databus
+    restart: always
+    volumes:
+      - ./mosquitto/config:/mosquitto/config:ro
+    expose: 
+      - 9001
+    ports: 
+      - "9001:9001"
+      - "1883:1883"
+    networks: 
+      - proxy-redirect
+  influxdb:
+    build:
+      context: ./influxdb
+    image: influxdb_edge:0.0.1
+    ports: 
+      - "8086:8086"
+    restart: always
+    volumes: 
+      - ./cfg-data/influxdb/data:/var/lib/influxdb
+    networks:
+      - proxy-redirect
+    environment:
+      - INFLUXDB_DB=serialdata
+      - INFLUXDB_HTTP_AUTH_ENABLED=false
+  node-red:
+    build: 
+      context: ./node-red
+    privileged: true
+    user: root
+    environment:
+      - TZ=Europe/Amsterdam
+    ports: 
+      - "1880:1880"
+    networks: 
+      - proxy-redirect
+    depends_on:
+      - ie_databus
+
+  react_visualize:
+    privileged: true
+    user: root
+    build:
+        context: ./react-visualize
+    image: archivingandvisualization
+    networks:
+        - proxy-redirect
+    ports: 
+        - "3000:3000"
+    mem_limit: 100mb
+    depends_on:
+      - ie_databus
+    volumes:
+        - './cfg-data/:/cfg-data/'
+networks:
+    proxy-redirect:
+        name: proxy-redirect

@@ -1,0 +1,64 @@
+.border-dotted{
+    border-style: dashed !important;
+    border-color: rgb(207, 126, 51);
+}
+
+.sidebar-tabs{
+    margin-top: 8%;
+    background-color: rgb(255, 255, 255);
+}
+.sidebar-tabs-top{
+    margin-top: 30%;
+    background-color: rgb(255, 255, 255);
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link{
+    background-color: rgb(228, 225, 225);
+}
+
+.editButton {
+    background-color: #073b70;
+}
+
+.mainrow{
+    height: 100%;
+    width: 100%;
+}
+
+#root{
+    height: 100%;
+}
+
+
+.header {
+    height: 13%;
+    padding-top: 2%;
+    padding-bottom: 1%;
+    width: 100%;
+}
+
+.content {
+    height: 100% !important;
+    width: 100%;
+}
+
+.app {
+    height: 100%;
+}
+
+html,body{
+    height: 94%;
+}
+
+.deleteButton{
+    margin-left: 86%;
+}
+
+.dashboardTab{
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+}
+.dashboardButton{
+    min-width: 5%;
+}
+

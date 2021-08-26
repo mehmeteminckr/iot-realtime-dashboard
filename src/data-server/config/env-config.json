@@ -1,0 +1,13 @@
+{
+    "MQTT_USER":"edge",
+    "MQTT_PASSWORD":"edge",
+    "MQTT_IP":"127.0.0.1",
+    "TOPIC_1":"ie/m/",
+    "CONNECTION_NAME":"Gps_1",
+    "VARIABLES":["position_n_s","position_e_w"],
+    "HOST": "localhost",
+    "PORT": "8086",
+    "USERNAME": "root",
+    "PASSWORD": "root",
+    "DATABASE": "databus_values"
+}

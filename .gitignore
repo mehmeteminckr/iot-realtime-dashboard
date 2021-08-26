@@ -1,0 +1,5 @@
+src/cfg-data/*
+src/node-red/*
+src/data-server/node_modules/*
+src/react-visualize/node_modules/*
+src/data-collector/node_modules/*
