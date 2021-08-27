@@ -1,5 +1,5 @@
 # start with a nodejs base-image
-FROM node:12.18.3-alpine
+FROM node:14-alpine
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -12,5 +12,8 @@ RUN npm install --production
 # Bundle app source
 COPY . .
 
+
+RUN npm run build
+
 #set start command for container
-CMD [ "node", "app.js" ]
+CMD [ "npm", "run","start" ]
