@@ -27,7 +27,7 @@ var options = {
 };
 var dataMap = [];
 /* Connect MQTT-Client to Databus (MQTT-Broker) */
-var client = mqtt_1.connect('mqtt://' + env_1.default.MQTT_HOST, options);
+var client = (0, mqtt_1.connect)('mqtt://' + env_1.default.MQTT_HOST, options);
 /* Subscribe to Topic after connection is established */
 client.on('connect', function () {
     console.log('Connected to ' + env_1.default.MQTT_HOST);
@@ -37,11 +37,12 @@ client.on('connect', function () {
 });
 /* Write Data to InfluxDB after recieved message*/
 client.on('message', function (topic, message) {
+    console.log(message.toString());
     var msg = JSON.parse(message.toString());
     console.log("Data-Collector: MQTT: Recieved message " + msg + " on MQTT-Topic " + topic + " responding with corresponding answer");
     // write msg to influx
     if (topic === env_1.default.MQTT_DEFAULT_TOPICNAME) {
-        var res = metadata_adapter_1.getDataSource(msg);
+        var res = (0, metadata_adapter_1.getDataSource)(msg);
         console.log(res);
         if (res) {
             dataMap = res;
@@ -54,11 +55,10 @@ client.on('message', function (topic, message) {
         console.log(dataMap);
     }
     else {
-        var jsonmsg = JSON.parse(msg);
-        jsonmsg.vals.forEach(function (element) {
+        msg.vals.forEach(function (element) {
             var nameIDMap = dataMap.find(function (x) { return x.topic === topic.toString(); }).values.find(function (y) { return y.value === element.id; });
             console.log(nameIDMap, "dsfsdfsdsdf", element);
-            var mutationGql = core_1.gql(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n              mutation CreateData($createDataArgs: DataContent!) {\n                createData(args: $createDataArgs)\n              }\n            "], ["\n              mutation CreateData($createDataArgs: DataContent!) {\n                createData(args: $createDataArgs)\n              }\n            "])));
+            var mutationGql = (0, core_1.gql)(templateObject_1 || (templateObject_1 = __makeTemplateObject(["\n              mutation CreateData($createDataArgs: DataContent!) {\n                createData(args: $createDataArgs)\n              }\n            "], ["\n              mutation CreateData($createDataArgs: DataContent!) {\n                createData(args: $createDataArgs)\n              }\n            "])));
             apolloClient.mutate({ mutation: mutationGql, variables: { createDataArgs: { name: nameIDMap.name, val: element.val, ts: element.ts } } }).then().catch(function (e) { return console.log(JSON.stringify(e)); });
         });
     }

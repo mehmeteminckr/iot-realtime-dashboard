@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import HomePage from './HomePage';
 import './HomePage.css'
-import InfluxDBClient from './mqtt/apollo-client';
+import InfluxDBClient from './graphql-client/apollo-client';
 import { addMeasurements, StateInterface } from './redux/reducers';
-import apolloClient from './mqtt/apollo-client';
+import apolloClient from './graphql-client/apollo-client';
 import { gql, useQuery } from '@apollo/client';
 import { useEffect } from 'react';
 
@@ -18,7 +18,7 @@ function App() {
         measurements
       }
   `
-  const { data , loading } = useQuery(queryGql,{variables:{}, client:apolloClient, skip: (msrmnts.length > 0 ? true: false) })
+  const { data , loading } = useQuery(queryGql,{variables:{}, client:apolloClient.instance, skip: (msrmnts.length > 0 ? true: false) })
   if(data){
     console.log(data)
     dispatch(addMeasurements(data.measurements))

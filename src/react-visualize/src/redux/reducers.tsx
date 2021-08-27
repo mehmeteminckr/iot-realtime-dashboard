@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import InfluxDBClient from '../mqtt/apollo-client';
+import InfluxDBClient from '../graphql-client/apollo-client';
 
 
 export type ChartType = "area" | "line" | "bar" | "histogram" | "pie" | "donut" | "radialBar" | "scatter" | "bubble" | "heatmap" | "treemap" | "boxPlot" | "candlestick" | "radar" | "polarArea" | "rangeBar" | undefined
@@ -15,7 +15,7 @@ export interface WidgetInterface {
   title: string;
   category: string;
   values?:string[];
-  refreshValue:number;
+  data:any[];
   width:number;
   height:number;
   x:number;
@@ -98,6 +98,7 @@ export const todoSlice = createSlice({
       let dashboardIndex = state.dashboards.findIndex(x => x.id === action.payload.dashboardId)
       let widgetId = action.payload.widgetId;
       let widget = state.dashboards[dashboardIndex].widgets.findIndex(x => x.id === widgetId);
+      console.log(widget,"ssss",action);
       if(action.payload.param === "X" && widget !== undefined){
         state.dashboards[dashboardIndex].widgets[widget].x = action.payload.value
       }
@@ -110,6 +111,21 @@ export const todoSlice = createSlice({
       if(action.payload.param === "height" && widget !== undefined){
         state.dashboards[dashboardIndex].widgets[widget].height = action.payload.value
       }
+      if(action.payload.param === "data" && widget !== undefined){
+        if(state.dashboards[dashboardIndex].widgets[widget].data.length === 0) {
+          state.dashboards[dashboardIndex].widgets[widget].data.push({name:action.payload.name,data:[action.payload.data]})
+        }
+        else{
+          state.dashboards[dashboardIndex].widgets[widget].data = state.dashboards[dashboardIndex].widgets[widget].data.map(x => {
+          if(x.name === action.payload.name){
+
+            return [...x.data,action.payload.data];
+          }
+          return x;
+        })
+        }
+      }
+
     },
     updateEditMode: (state) => {
       state.editMode = !state.editMode

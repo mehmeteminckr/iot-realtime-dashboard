@@ -5,7 +5,7 @@ import { ApolloClient, HttpLink, InMemoryCache , gql} from '@apollo/client/core'
 import fetch from 'cross-fetch';
 
 const apolloClient = new ApolloClient({
-  link: new HttpLink({ uri: 'http://localhost:4000/graphql', fetch:fetch,credentials: 'same-origin',}),
+  link: new HttpLink({ uri: 'http://data-server:4000/graphql', fetch:fetch,credentials: 'same-origin',}),
   cache: new InMemoryCache()
 });
 
@@ -22,6 +22,7 @@ const options = {
 
 let dataMap: DataMapInterface[] = [];
 
+console.log(env)
 /* Connect MQTT-Client to Databus (MQTT-Broker) */
 var client = connect('mqtt://' + env.MQTT_HOST, options);
 
@@ -35,6 +36,7 @@ client.on('connect', () => {
 
 /* Write Data to InfluxDB after recieved message*/
 client.on('message', function (topic, message) {
+  console.log(message.toString())
   let msg = JSON.parse(message.toString());
   console.log(`Data-Collector: MQTT: Recieved message ${msg} on MQTT-Topic ${topic} responding with corresponding answer`)
   // write msg to influx
@@ -52,8 +54,7 @@ client.on('message', function (topic, message) {
     console.log(dataMap);
   }
   else {
-    var jsonmsg = JSON.parse(msg);
-    jsonmsg.vals.forEach((element: { id: string; val: any; ts:string; }) => {
+    msg.vals.forEach((element: { id: string; val: any; ts:string; }) => {
       let nameIDMap = dataMap.find(x => x.topic === topic.toString()).values.find(y => y.value === element.id);
       console.log(nameIDMap,"dsfsdfsdsdf",element)
       const mutationGql = gql `

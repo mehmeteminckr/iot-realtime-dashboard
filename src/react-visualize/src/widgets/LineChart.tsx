@@ -6,12 +6,24 @@ import { ChartType } from "../redux/reducers";
 interface LineChartUpdateInteface {
     data: {name:string,val:number,ts:number};
     width:number;
-    height:number
+    height:number;
+    selectedValues:string[];
+    title:string;
 }
 
 export const LineChart = (props :LineChartUpdateInteface) => {
 
-    const [values,setValues] = useState([] as any[]);
+
+    const [values,setValues] = useState(
+        props.selectedValues.map(x => {
+            return {
+                name:x,
+                data:[] as number[][]
+            }
+        })
+    );
+
+    lineChartOptions.title.text = props.title;
 
     useEffect(() => {
 
@@ -19,15 +31,12 @@ export const LineChart = (props :LineChartUpdateInteface) => {
             
           console.log(newValues,"sdsdf",values)
           let updatedValues = Array.from(values);
+
           if(newValues.data && newValues.data.name && newValues.data.val){
-            let index = updatedValues.findIndex(x => x.name === newValues.data.name)
-            if(index === -1) {
-                updatedValues.push({name:newValues.data.name,data:[[Number(newValues.data.ts),newValues.data.val]]})
-                console.log(newValues)
-            }
-            else {
+            //let index = updatedValues.findIndex(x => x.name === newValues.data.name)
+
                 updatedValues = updatedValues.map((x,i) => {
-                    if(i === index){
+                    if(x.name === newValues.data.name){
                         return {
                             name: x.name,
                             data: [...x.data,[Number(newValues.data.ts),newValues.data.val]]
@@ -36,16 +45,16 @@ export const LineChart = (props :LineChartUpdateInteface) => {
                     return x;
                 })
                 
-            }
           }
       
           setValues(updatedValues);
         }
-        if (props) {
+        if (props.data && props.selectedValues.some(x => x === props.data.name)) {
           UpdateValues(props);
         }
     
-      }, [props.data]);
+      }, [props]);
+
 
     return(
         <div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { addNewWidget, StateInterface,  WidgetInterface} from './redux/reducers'
 import { useDispatch, useSelector } from 'react-redux';
 import CheckIcon from '@material-ui/icons/Check';
-import InfluxDBClient from './mqtt/apollo-client';
+import InfluxDBClient from './graphql-client/apollo-client';
 
 
 const NewWidget = () => {
@@ -11,7 +11,7 @@ const NewWidget = () => {
     const measurements = useSelector((state: StateInterface) => state.measurements);
     const widgetsLenght = useSelector((state: StateInterface) => state.dashboards.find(x => x.id === dashboardId)?.widgets)?.length;
     let id = widgetsLenght as number + 1;
-    const [widgetInput,setWidgetInput] = useState({width:350,id:id,height:350,x:150,y:150 ,refreshValue:0,values:[] as any[]} as WidgetInterface)
+    const [widgetInput,setWidgetInput] = useState({width:350,id:id,height:350,x:150,y:150,values:[] as string[],data:[] as any[]} as WidgetInterface)
 
     const dispatch = useDispatch();
 
@@ -51,8 +51,8 @@ const NewWidget = () => {
                             </button>
                             <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 <a onClick= {(e) => setWidgetInput({...widgetInput,category:"Line Chart"})} className="dropdown-item" href="#">Line Chart</a>
-                                <a onClick= {(e) => setWidgetInput({...widgetInput,category:"Pie Chart"})} className="dropdown-item" href="#">Pie Chart</a>
-                                <a onClick= {(e) => setWidgetInput({...widgetInput,category:"Timeseries Chart"})} className="dropdown-item" href="#">Timeseries Chart</a>
+                                <a onClick= {(e) => setWidgetInput({...widgetInput,category:"Pie Chart"})} className="disabled dropdown-item" href="#">Pie Chart</a>
+                                <a onClick= {(e) => setWidgetInput({...widgetInput,category:"Timeseries Chart"})} className="disabled dropdown-item" href="#">Timeseries Chart</a>
                             </div>
                         </div>
                         <br></br>
@@ -67,23 +67,6 @@ const NewWidget = () => {
                                 measurements.map(x => (
                                         <a onClick = {() => addValue(x, widgetInput.values!)} className="dropdown-item" href="#">{
                                             x  } {widgetInput.values!.includes(x) ? <CheckIcon color={'secondary'}></CheckIcon>:null}</a>
-                                    ))
-                                }
-                               
-                            </div>
-                        </div>
-                        <br></br>
-                        <span>Refresh Value</span>
-                        <div className="dropdown">
-                            <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            { widgetInput.refreshValue !== 0 ? widgetInput.refreshValue : "Choose Value"}
-                            </button>
-                            <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                { 
-                                
-                                refreshInterval.map(x => (
-                                        <a onClick = {() => setWidgetInput({...widgetInput,refreshValue:x})} className="dropdown-item" href="#">{
-                                            x} {widgetInput.refreshValue === x ? <CheckIcon color={'secondary'}></CheckIcon>:null}</a>
                                     ))
                                 }
                                

@@ -1,6 +1,6 @@
 {
     "MQTT": {
-        "HOST": "localhost",
+        "HOST": "ie_databus",
         "PORT": "1883",
         "USERNAME": "edge",
         "PASSWORD": "edge",

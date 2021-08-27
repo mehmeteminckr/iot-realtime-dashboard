@@ -8,8 +8,8 @@ import { LineChart } from './widgets/LineChart';
 import { ApolloClient, HttpLink, InMemoryCache , gql, useSubscription} from '@apollo/client';
 import fetch from 'cross-fetch';
 import { WebSocketLink } from 'apollo-link-ws';
-import apolloClient from './mqtt/apollo-client';
-
+import apolloClient from './graphql-client/apollo-client';
+import { PieChart } from './widgets/PieChart';
 
 
 const Dashboard = () => {
@@ -24,7 +24,15 @@ const Dashboard = () => {
 
     const editMode = useSelector((state: StateInterface) => state.editMode);
 
-      
+    const [ shouldSub, setShouldSub] = useState(false)
+
+    useEffect(() => {
+      console.log(series)
+      if(series!.length > 0) {
+        setShouldSub(true)
+      }
+    },[series?.length]);
+
     console.log('start subscription to sensor');
     const subscriptionGql = gql `
           subscription($subscribe2DataTopic: [String]!) {
@@ -36,20 +44,17 @@ const Dashboard = () => {
           }
         `
     const { data , loading } = useSubscription(subscriptionGql,
-        {variables:{subscribe2DataTopic:series?.map(x => x.name)}, client:apolloClient,})
-    console.log(data)
-    
+        {variables:{subscribe2DataTopic:series?.map(x => x.name)}, client:apolloClient.instance ,skip:shouldSub})
+    console.log(data,"should subscribe: ",shouldSub)
+
+    shouldSub && setShouldSub(false)
 
     return (
         <div className="container">
             
                 {
                   dashboard?.widgets.map((widget) => {
-            
-                    if(widget.category === 'Line Chart'){
-                      
-                    }
-      
+                    console.log(widget)
                     return (
                         <Rnd
                             size={{ width: widget.width,  height: widget.height }}
@@ -65,7 +70,16 @@ const Dashboard = () => {
                             enableResizing={editMode}
                             > 
                               <div className="d-flex">
-                                <LineChart data={data?.subscribe2data} width={widget.width} height={widget.height}/>
+                                {
+                                  widget.category === 'Line Chart' ?
+                                  <LineChart key={widget.id} data={data?.subscribe2data} width={widget.width} height={widget.height} selectedValues={widget.values!} title={widget.title}/>
+                                  : (
+                                    widget.category === 'Pie Chart' ?
+                                    <PieChart key={widget.id} data={data?.subscribe2data} width={widget.width} height={widget.height} selectedValues={widget.values!} />
+                                    :
+                                    <h2>Timeseries Chart</h2>
+                                  )
+                                }
                                 { editMode &&
                                 <IconButton onClick={() => dispatch(deleteWidget({widgetId:widget.id,dashboardId:dashboardId}))} className="deleteButton btn btn-secondary btn-sm"><DeleteIcon className="deleteIcon" /></IconButton>
                                 }
